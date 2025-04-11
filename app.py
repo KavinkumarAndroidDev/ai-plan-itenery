@@ -1,16 +1,23 @@
 from flask import Flask, request, jsonify
 import google.generativeai as genai
+import os
 
 app = Flask(__name__)
 
-genai.configure(api_key="AIzaSyBCUY56nWobfSVoxRWemGkjBtWunrpmBrs")  # Replace with your key
+# --- Configure Gemini API ---
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # Use Railway's environment variable
+
 model = genai.GenerativeModel("gemini-1.5-pro")
+
+@app.route("/", methods=["GET"])
+def home():
+    return "✅ Travel Planner API is Running!"
 
 @app.route("/generate-plan", methods=["POST"])
 def generate_plan():
     data = request.get_json()
 
-    # Get inputs from POST request
+    # Collect data with defaults
     start = data.get("start", "Salem")
     destination = data.get("destination", "Goa")
     travel_mode = data.get("travel_mode", "Train")
@@ -24,6 +31,7 @@ def generate_plan():
     budget = data.get("budget", "₹10,000 - ₹15,000")
     num_days = data.get("num_days", "")
 
+    # Create Gemini Prompt
     prompt = f"""
     Plan a travel itinerary from {start} to {destination}.
     {f"Duration: {num_days} days." if num_days else "You decide the ideal number of days."}
@@ -61,3 +69,7 @@ def generate_plan():
         })
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+# --- Run the Flask App ---
+if __name__ == "__main__":
+    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
