@@ -5,7 +5,7 @@ import os
 app = Flask(__name__)
 
 # --- Configure Gemini API ---
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))  # Use Railway's environment variable
+genai.configure(api_key=os.getenv("AIzaSyBCUY56nWobfSVoxRWemGkjBtWunrpmBrs"))  # Use Railway's environment variable
 
 model = genai.GenerativeModel("gemini-1.5-pro")
 
