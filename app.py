@@ -1,11 +1,13 @@
-from flask import Flask, request, jsonify
 import google.generativeai as genai
 import os
+from flask import Flask, request, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)
 
 # --- Configure Gemini API ---
-genai.configure(api_key=os.getenv("AIzaSyBCUY56nWobfSVoxRWemGkjBtWunrpmBrs"))  # Use Railway's environment variable
+genai.configure(api_key="AIzaSyBCUY56nWobfSVoxRWemGkjBtWunrpmBrs")
 
 model = genai.GenerativeModel("gemini-1.5-pro")
 
@@ -13,7 +15,7 @@ model = genai.GenerativeModel("gemini-1.5-pro")
 def home():
     return "✅ Travel Planner API is Running!"
 
-@app.route("/generate-plan", methods=["POST"])
+@app.route('/generate-plan', methods=['POST'])
 def generate_plan():
     data = request.get_json()
 
@@ -71,5 +73,5 @@ def generate_plan():
         return jsonify({"error": str(e)}), 500
 
 # --- Run the Flask App ---
-if __name__ == "__main__":
-    app.run(debug=False, host="0.0.0.0", port=int(os.environ.get("PORT", 8080)))
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=8080, debug=True)
